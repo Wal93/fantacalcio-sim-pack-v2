@@ -2,6 +2,9 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from './Login.jsx';
 import toast from 'react-hot-toast';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 function LiveMatch() {
   const { matchId } = useParams();
@@ -188,16 +191,9 @@ function LiveMatch() {
   // Loading state
   if (loading && !status) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh',
-        flexDirection: 'column'
-      }}>
-        <div style={{fontSize: '48px', marginBottom: '16px'}}>⏳</div>
-        <h3 style={{color: '#16A34A'}}>Caricamento Match Enterprise...</h3>
-        <p style={{color: '#94A3B8'}}>Connessione al sistema live in corso</p>
+      <div className="flex justify-center items-center min-h-96 flex-col">
+        <LoadingSpinner size="xl" text="Caricamento Match Enterprise..." />
+        <p className="text-dark-400 mt-4">Connessione al sistema live in corso</p>
       </div>
     );
   }
@@ -205,311 +201,248 @@ function LiveMatch() {
   // Error state
   if (error) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh',
-        flexDirection: 'column'
-      }}>
-        <div style={{fontSize: '48px', marginBottom: '16px'}}>❌</div>
-        <h3 style={{color: '#DC2626'}}>Errore Sistema Enterprise</h3>
-        <p style={{color: '#94A3B8'}}>{error}</p>
-        <button
+      <div className="flex justify-center items-center min-h-96 flex-col">
+        <div className="text-6xl mb-4">❌</div>
+        <h3 className="text-red-400 text-xl mb-2">Errore Sistema Enterprise</h3>
+        <p className="text-dark-400 mb-6">{error}</p>
+        <Button
           onClick={() => window.location.reload()}
-          style={{
-            background: '#16A34A',
-            color: '#fff',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            marginTop: '16px'
-          }}
+          variant="success"
+          icon="🔄"
         >
-          🔄 Ricarica
-        </button>
+          Ricarica
+        </Button>
       </div>
     );
   }
 
   return (
-    <div style={{background: "#0F172A", color: "#fff", minHeight: "100vh", padding: "24px"}}>
+    <div className="max-w-7xl mx-auto space-y-8">
       
-      {/* Header Enterprise con Timer Live */}
-      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", background: "#1E293B", padding: "20px", borderRadius: "12px", border: "2px solid #16A34A"}}>
-        <div>
-          <h1 style={{color: "#16A34A", margin: 0, fontSize: "28px"}}>
-            ⚽ LIVE MATCH ENTERPRISE
-          </h1>
-          <div style={{fontSize: "12px", color: "#94A3B8", marginTop: "4px"}}>
-            Lega ID: {status?.lega_id || 1} • Match ID: {finalMatchId}
-          </div>
-          {finalMatchId === 'demo' && (
-            <button 
-              onClick={iniziaPartitaEnterprise}
-              disabled={loading}
-              style={{
-                background: loading ? "#6B7280" : "linear-gradient(135deg, #16A34A 0%, #22C55E 100%)",
-                color: "#fff",
-                border: "none",
-                padding: "8px 16px",
-                fontSize: "12px",
-                fontWeight: "bold",
-                borderRadius: "8px",
-                cursor: loading ? "not-allowed" : "pointer",
-                marginTop: "8px"
-              }}
-            >
-              {loading ? "⏳ Avvio..." : "🚀 Avvia Match Reale"}
-            </button>
-          )}
-        </div>
-        
-        <div style={{textAlign: "center"}}>
-          <div style={{fontSize: "32px", fontWeight: "bold", color: "#fff"}}>
-            {partita.home.name} vs {partita.away.name}
-          </div>
-          <div style={{fontSize: "14px", color: "#94A3B8", marginTop: "4px"}}>
-            {status?.squadre?.casa?.proprietario || 'Mario Rossi'} vs {status?.squadre?.trasferta?.proprietario || 'Luigi Verdi'}
-          </div>
-        </div>
-        
-        <div style={{textAlign: "center"}}>
-          <div style={{fontSize: "36px", fontWeight: "bold", color: status?.partita_finita ? "#DC2626" : "#16A34A"}}>
-            {status?.minuto_corrente || 67}'
-          </div>
-          <div style={{fontSize: "14px", color: status?.partita_finita ? "#DC2626" : "#16A34A", fontWeight: "bold"}}>
-            {status?.partita_finita ? "FINALE" : "IN CORSO"}
-          </div>
-          {!status?.partita_finita && (
-            <div style={{fontSize: "11px", color: "#94A3B8", marginTop: "4px"}}>
-              -{Math.ceil((status?.tempo_rimanente_ms || 180000) / 1000)}s
+      {/* Header Live Match */}
+      <Card className="border-primary-600">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gradient mb-2">
+              ⚽ LIVE MATCH ENTERPRISE
+            </h1>
+            <div className="text-sm text-dark-400">
+              Lega ID: {status?.lega_id || 1} • Match ID: {finalMatchId}
             </div>
-          )}
-        </div>
-      </div>
-      <div style={{
-        position: "relative",
-        width: "100%", 
-        height: "600px", 
-        background: "linear-gradient(45deg, #16A34A 0%, #22C55E 50%, #16A34A 100%)",
-        border: "4px solid #fff",
-        borderRadius: "12px",
-        backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.1) 50%, transparent 50%), linear-gradient(rgba(255,255,255,0.1) 50%, transparent 50%)",
-        backgroundSize: "20px 20px",
-        marginBottom: "24px"
-      }}>
-        
-        {/* Linee del campo */}
-        <div style={{position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#fff", transform: "translateY(-50%)"}} />
-        <div style={{position: "absolute", top: 0, bottom: 0, left: "50%", width: 2, background: "#fff", transform: "translateX(-50%)"}} />
-        
-        {/* Cerchio centrale */}
-        <div style={{position: "absolute", top: "50%", left: "50%", width: 120, height: 120, border: "2px solid #fff", borderRadius: "50%", transform: "translate(-50%, -50%)"}} />
-        
-        {/* Aree di rigore */}
-        <div style={{position: "absolute", top: 0, left: "50%", width: 220, height: 110, border: "2px solid #fff", borderTop: "none", transform: "translateX(-50%)"}} />
-        <div style={{position: "absolute", bottom: 0, left: "50%", width: 220, height: 110, border: "2px solid #fff", borderBottom: "none", transform: "translateX(-50%)"}} />
-        
-        {/* Giocatori squadra casa */}
-        {partita.home.players && partita.home.players.map(p => (
-          <div key={`home-${p.id}`} style={{
-            position: "absolute",
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: 40,
-            height: 50,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            transform: "translate(-50%, -50%)"
-          }}>
-            <div style={{
-              width: 36,
-              height: 36,
-              background: "#2563EB",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontSize: 9,
-              fontWeight: "bold",
-              border: "2px solid #fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
-            }}>
-              {p.name.split(' ')[0]}
+            {finalMatchId === 'demo' && (
+              <Button 
+                onClick={iniziaPartitaEnterprise}
+                disabled={loading}
+                loading={loading}
+                variant="success"
+                size="sm"
+                className="mt-3"
+                icon="🚀"
+              >
+                {loading ? "Avvio..." : "Avvia Match Reale"}
+              </Button>
+            )}
+          </div>
+          
+          <div className="text-center">
+            <div className="text-2xl lg:text-3xl font-bold text-dark-100 mb-1">
+              {partita.home.name} vs {partita.away.name}
             </div>
-            <div style={{fontSize: 10, color: "#fff", textShadow: "1px 1px 2px rgba(0,0,0,0.8)", marginTop: 2}}>
-              {p.role}
+            <div className="text-sm text-dark-400">
+              {status?.squadre?.casa?.proprietario || 'Mario Rossi'} vs {status?.squadre?.trasferta?.proprietario || 'Luigi Verdi'}
             </div>
           </div>
-        ))}
-        
-        {/* Giocatori squadra trasferta */}
-        {partita.away.players && partita.away.players.map(p => (
-          <div key={`away-${p.id}`} style={{
-            position: "absolute",
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: 40,
-            height: 50,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            transform: "translate(-50%, -50%)"
-          }}>
-            <div style={{
-              width: 36,
-              height: 36,
-              background: "#DC2626",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontSize: 9,
-              fontWeight: "bold",
-              border: "2px solid #fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)"
-            }}>
-              {p.name.split(' ')[0]}
+          
+          <div className="text-center">
+            <div className={`text-4xl lg:text-5xl font-bold ${status?.partita_finita ? 'text-red-400' : 'text-primary-400'}`}>
+              {status?.minuto_corrente || 67}'
             </div>
-            <div style={{fontSize: 10, color: "#fff", textShadow: "1px 1px 2px rgba(0,0,0,0.8)", marginTop: 2}}>
-              {p.role}
+            <div className={`text-sm font-bold ${status?.partita_finita ? 'text-red-400' : 'text-primary-400'}`}>
+              {status?.partita_finita ? "FINALE" : "IN CORSO"}
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Tabellone risultato */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "40px",
-        background: "linear-gradient(135deg, #1E293B 0%, #374151 100%)",
-        padding: "32px",
-        borderRadius: "16px",
-        border: "2px solid #16A34A",
-        marginBottom: "32px"
-      }}>
-        <div style={{textAlign: "center", flex: 1}}>
-          <div style={{fontSize: "20px", fontWeight: "bold", color: "#2563EB", marginBottom: "12px"}}>
-            {partita.home.name}
-          </div>
-          <div style={{fontSize: "16px", color: "#94A3B8", marginBottom: "8px"}}>
-            {status.squadre?.casa?.proprietario || 'Mario Rossi'}
-          </div>
-          <div style={{fontSize: "48px", fontWeight: "bold", color: "#fff"}}>
-            {status?.risultato?.casa || 1}
-          </div>
-        </div>
-        
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px",
-          background: "rgba(22, 163, 74, 0.1)",
-          borderRadius: "12px",
-          border: "2px solid #16A34A"
-        }}>
-          <div style={{fontSize: "28px", fontWeight: "bold", color: "#16A34A"}}>
-            {status?.risultato?.casa || 1} - {status?.risultato?.trasferta || 2}
-          </div>
-          <div style={{fontSize: "14px", color: "#16A34A", marginTop: "8px"}}>
-            {status?.minuto_corrente || 67}' {status?.partita_finita ? "FT" : ""}
-          </div>
-          <div style={{fontSize: "12px", color: "#94A3B8", marginTop: "4px"}}>
-            Eventi: {status?.statistiche?.eventi_totali || eventi.length}
-          </div>
-        </div>
-        
-        <div style={{textAlign: "center", flex: 1}}>
-          <div style={{fontSize: "20px", fontWeight: "bold", color: "#DC2626", marginBottom: "12px"}}>
-            {partita.away.name}
-          </div>
-          <div style={{fontSize: "16px", color: "#94A3B8", marginBottom: "8px"}}>
-            {status?.squadre?.trasferta?.proprietario || 'Luigi Verdi'}
-          </div>
-          <div style={{fontSize: "48px", fontWeight: "bold", color: "#fff"}}>
-            {status?.risultato?.trasferta || 2}
-          </div>
-        </div>
-      </div>
-
-      {/* Cronaca Eventi */}
-      <div style={{background: "#1E293B", padding: "24px", borderRadius: "12px", border: "1px solid #374151"}}>
-        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px"}}>
-          <h3 style={{color: "#16A34A", margin: 0, fontSize: "20px"}}>📋 Cronaca Live Enterprise</h3>
-          <div style={{fontSize: "12px", color: "#94A3B8"}}>
-            {status?.partita_finita ? (
-              "Partita Terminata"
-            ) : (
-              <>
-                Prossimo evento in: {Math.ceil((status?.statistiche?.prossimo_evento_in || 12000) / 1000)}s •
-                Aggiornamento: 3s • Timer: {status?.minuto_corrente || 67}'/90'
-              </>
+            {!status?.partita_finita && (
+              <div className="text-xs text-dark-400 mt-1">
+                -{Math.ceil((status?.tempo_rimanente_ms || 180000) / 1000)}s
+              </div>
             )}
           </div>
         </div>
-        
-        {eventi.length === 0 ? (
-          <div style={{textAlign: "center", color: "#94A3B8", padding: "50px"}}>
-            <div style={{fontSize: "32px", marginBottom: "16px"}}>⏳</div>
-            <h4 style={{color: "#F59E0B", marginBottom: "8px"}}>Sistema Enterprise Attivo</h4>
-            <p>In attesa del primo evento dalla simulazione Serie A...</p>
+      </Card>
+      {/* Campo di Gioco */}
+      <Card className="overflow-hidden p-0">
+        <div className="relative w-full h-96 lg:h-[600px] bg-gradient-to-br from-green-600 via-green-500 to-green-600 border-4 border-white rounded-xl overflow-hidden">
+          {/* Pattern del campo */}
+          <div className="absolute inset-0 opacity-20" style={{
+            backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.1) 50%, transparent 50%), linear-gradient(rgba(255,255,255,0.1) 50%, transparent 50%)",
+            backgroundSize: "20px 20px"
+          }} />
+          
+          {/* Linee del campo */}
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white transform -translate-y-1/2" />
+          <div className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-white transform -translate-x-1/2" />
+          
+          {/* Cerchio centrale */}
+          <div className="absolute top-1/2 left-1/2 w-24 h-24 lg:w-32 lg:h-32 border-2 border-white rounded-full transform -translate-x-1/2 -translate-y-1/2" />
+          
+          {/* Aree di rigore */}
+          <div className="absolute top-0 left-1/2 w-48 lg:w-56 h-24 lg:h-28 border-2 border-white border-t-0 transform -translate-x-1/2" />
+          <div className="absolute bottom-0 left-1/2 w-48 lg:w-56 h-24 lg:h-28 border-2 border-white border-b-0 transform -translate-x-1/2" />
+          
+          {/* Giocatori squadra casa */}
+          {partita.home.players && partita.home.players.map(p => (
+            <div 
+              key={`home-${p.id}`} 
+              className="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 animate-fadeIn"
+              style={{
+                left: `${p.x || 20}%`,
+                top: `${p.y || 50}%`
+              }}
+            >
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold border-2 border-white shadow-lg hover:scale-110 transition-transform duration-200">
+                {p.name?.split(' ')[0] || 'P'}
+              </div>
+              <div className="text-xs text-white text-shadow mt-1 font-medium">
+                {p.role || 'P'}
+              </div>
+            </div>
+          ))}
+          
+          {/* Giocatori squadra trasferta */}
+          {partita.away.players && partita.away.players.map(p => (
+            <div 
+              key={`away-${p.id}`} 
+              className="absolute flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 animate-fadeIn"
+              style={{
+                left: `${p.x || 80}%`,
+                top: `${p.y || 50}%`
+              }}
+            >
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-red-600 rounded-full flex items-center justify-center text-white text-xs lg:text-sm font-bold border-2 border-white shadow-lg hover:scale-110 transition-transform duration-200">
+                {p.name?.split(' ')[0] || 'P'}
+              </div>
+              <div className="text-xs text-white text-shadow mt-1 font-medium">
+                {p.role || 'P'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Tabellone Risultato */}
+      <Card className="border-primary-600">
+        <div className="flex items-center justify-center gap-8 lg:gap-16">
+          {/* Squadra Casa */}
+          <div className="text-center flex-1">
+            <div className="text-xl lg:text-2xl font-bold text-blue-400 mb-3">
+              {partita.home.name}
+            </div>
+            <div className="text-sm lg:text-base text-dark-400 mb-2">
+              {status?.squadre?.casa?.proprietario || 'Mario Rossi'}
+            </div>
+            <div className="text-5xl lg:text-6xl font-bold text-dark-100">
+              {status?.risultato?.casa || 1}
+            </div>
           </div>
-        ) : (
-          <div style={{display: "flex", flexDirection: "column", gap: "12px", maxHeight: "400px", overflowY: "auto"}}>
-            {eventi.map((evento, i) => (
-              <div key={evento.id} style={{
-                padding: "16px 20px",
-                background: "linear-gradient(135deg, #374151 0%, #4B5563 100%)",
-                borderRadius: "12px",
-                border: "1px solid #6B7280",
-                borderLeft: `5px solid ${evento.lato === 'casa' ? '#2563EB' : '#DC2626'}`
-              }}>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                  <div style={{display: "flex", alignItems: "center", gap: "12px"}}>
-                    <div style={{
-                      fontSize: "24px", 
-                      width: "40px", 
-                      textAlign: "center"
-                    }}>
-                      {evento.emoji}
-                    </div>
-                    <div>
-                      <div style={{fontSize: "16px", color: "#F3F4F6", fontWeight: "bold"}}>
-                        {evento.minuto}' - {evento.giocatore_nome}
+          
+          {/* Risultato Centrale */}
+          <div className="flex flex-col items-center p-6 bg-primary-600 bg-opacity-10 rounded-xl border-2 border-primary-600">
+            <div className="text-3xl lg:text-4xl font-bold text-primary-400">
+              {status?.risultato?.casa || 1} - {status?.risultato?.trasferta || 2}
+            </div>
+            <div className="text-sm text-primary-400 mt-2">
+              {status?.minuto_corrente || 67}' {status?.partita_finita ? "FT" : ""}
+            </div>
+            <div className="text-xs text-dark-400 mt-1">
+              Eventi: {status?.statistiche?.eventi_totali || eventi.length}
+            </div>
+          </div>
+          
+          {/* Squadra Trasferta */}
+          <div className="text-center flex-1">
+            <div className="text-xl lg:text-2xl font-bold text-red-400 mb-3">
+              {partita.away.name}
+            </div>
+            <div className="text-sm lg:text-base text-dark-400 mb-2">
+              {status?.squadre?.trasferta?.proprietario || 'Luigi Verdi'}
+            </div>
+            <div className="text-5xl lg:text-6xl font-bold text-dark-100">
+              {status?.risultato?.trasferta || 2}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Cronaca Eventi */}
+      <Card>
+        <Card.Header>
+          <div className="flex justify-between items-center">
+            <Card.Title className="text-primary-400">
+              📋 Cronaca Live Enterprise
+            </Card.Title>
+            <div className="text-xs text-dark-400">
+              {status?.partita_finita ? (
+                "Partita Terminata"
+              ) : (
+                <>
+                  Prossimo evento in: {Math.ceil((status?.statistiche?.prossimo_evento_in || 12000) / 1000)}s •
+                  Aggiornamento: 3s • Timer: {status?.minuto_corrente || 67}'/90'
+                </>
+              )}
+            </div>
+          </div>
+        </Card.Header>
+        
+        <Card.Content>
+          {eventi.length === 0 ? (
+            <div className="text-center py-12 text-dark-400">
+              <div className="text-5xl mb-4">⏳</div>
+              <h4 className="text-yellow-400 text-lg font-bold mb-2">Sistema Enterprise Attivo</h4>
+              <p>In attesa del primo evento dalla simulazione Serie A...</p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {eventi.map((evento, i) => (
+                <div 
+                  key={evento.id} 
+                  className={`p-4 rounded-lg border-l-4 animate-fadeIn ${
+                    evento.lato === 'casa' 
+                      ? 'border-blue-500 bg-blue-500 bg-opacity-10' 
+                      : 'border-red-500 bg-red-500 bg-opacity-10'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <div className="text-2xl w-10 text-center animate-bounce">
+                        {evento.emoji}
                       </div>
-                      <div style={{fontSize: "12px", color: "#94A3B8"}}>
-                        {evento.squadra_reale} • {evento.descrizione}
+                      <div>
+                        <div className="font-bold text-dark-100 text-lg">
+                          {evento.minuto}' - {evento.giocatore_nome}
+                        </div>
+                        <div className="text-sm text-dark-400">
+                          {evento.squadra_reale} • {evento.descrizione}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div style={{textAlign: "right"}}>
-                    <div style={{
-                      fontSize: "14px", 
-                      fontWeight: "bold",
-                      color: evento.lato === 'casa' ? '#2563EB' : '#DC2626'
-                    }}>
-                      {evento.lato === 'casa' ? partita.home.name : partita.away.name}
-                    </div>
-                    {evento.punti_fantasy && (
-                      <div style={{fontSize: "12px", color: "#16A34A"}}>
-                        +{evento.punti_fantasy} punti fantasy
+                    <div className="text-right">
+                      <div className={`font-bold ${
+                        evento.lato === 'casa' ? 'text-blue-400' : 'text-red-400'
+                      }`}>
+                        {evento.lato === 'casa' ? partita.home.name : partita.away.name}
                       </div>
-                    )}
+                      {evento.punti_fantasy && (
+                        <div className="text-sm text-green-400 font-medium">
+                          +{evento.punti_fantasy} punti fantasy
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </Card.Content>
+      </Card>
     </div>
   )
 }

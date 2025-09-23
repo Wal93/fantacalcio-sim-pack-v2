@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './Login.jsx';
 import toast from 'react-hot-toast';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Modal from '../components/ui/Modal';
+import Input from '../components/ui/Input';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
@@ -136,263 +141,211 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '60vh'
-      }}>
-        <div style={{fontSize: '48px'}}>⏳</div>
+      <div className="flex justify-center items-center min-h-96">
+        <LoadingSpinner size="lg" text="Caricamento dashboard..." />
       </div>
     );
   }
 
   return (
-    <div style={{
-      padding: '32px',
-      maxWidth: '1200px',
-      margin: '0 auto'
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '32px'
-      }}>
-        <h1 style={{
-          color: '#16A34A',
-          fontSize: '32px',
-          margin: 0
-        }}>
-          🏠 Dashboard Enterprise
-        </h1>
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold text-gradient mb-2">
+            🏠 Dashboard
+          </h1>
+          <p className="text-dark-400">
+            Benvenuto nel tuo centro di controllo fantacalcio
+          </p>
+        </div>
         
-        <div style={{display: 'flex', gap: '12px'}}>
-          <button
+        <div className="flex flex-wrap gap-3">
+          <Button
             onClick={() => setShowCreateLega(true)}
-            style={{
-              background: 'linear-gradient(135deg, #16A34A 0%, #22C55E 100%)',
-              color: '#fff',
-              border: 'none',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            icon="➕"
+            variant="success"
           >
-            ➕ Nuova Lega
-          </button>
+            Nuova Lega
+          </Button>
           
-          <button
+          <Button
             onClick={simulateGiornata}
-            style={{
-              background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
-              color: '#000',
-              border: 'none',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            icon="⚽"
+            variant="warning"
           >
-            ⚽ Simula Giornata
-          </button>
+            Simula Giornata
+          </Button>
           
-          <button
+          <Button
             onClick={startLiveMatch}
-            style={{
-              background: 'linear-gradient(135deg, #DC2626 0%, #EF4444 100%)',
-              color: '#fff',
-              border: 'none',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
+            icon="🚀"
+            variant="danger"
           >
-            🚀 Start Live Match
-          </button>
+            Start Live Match
+          </Button>
         </div>
       </div>
 
-      {/* Modal Crea Lega */}
-      {showCreateLega && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: '#1E293B',
-            padding: '32px',
-            borderRadius: '12px',
-            border: '2px solid #16A34A',
-            minWidth: '400px'
-          }}>
-            <h3 style={{color: '#16A34A', marginBottom: '20px'}}>➕ Crea Nuova Lega</h3>
-            
-            <input
-              type="text"
-              value={newLegaName}
-              onChange={(e) => setNewLegaName(e.target.value)}
-              placeholder="Nome della lega..."
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                background: '#374151',
-                border: '1px solid #6B7280',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '16px',
-                marginBottom: '20px'
-              }}
-            />
-            
-            <div style={{display: 'flex', gap: '12px', justifyContent: 'flex-end'}}>
-              <button
-                onClick={() => setShowCreateLega(false)}
-                style={{
-                  background: '#6B7280',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  cursor: 'pointer'
-                }}
-              >
-                Annulla
-              </button>
-              <button
-                onClick={createLega}
-                style={{
-                  background: 'linear-gradient(135deg, #16A34A 0%, #22C55E 100%)',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                ✅ Crea
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Statistiche rapide */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="text-center">
+          <div className="text-3xl mb-2">🏆</div>
+          <div className="text-2xl font-bold text-primary-400">{leghe.length}</div>
+          <div className="text-dark-400">Leghe Attive</div>
+        </Card>
+        
+        <Card className="text-center">
+          <div className="text-3xl mb-2">👥</div>
+          <div className="text-2xl font-bold text-green-400">0</div>
+          <div className="text-dark-400">Squadre Totali</div>
+        </Card>
+        
+        <Card className="text-center">
+          <div className="text-3xl mb-2">⚽</div>
+          <div className="text-2xl font-bold text-yellow-400">0</div>
+          <div className="text-dark-400">Partite Giocate</div>
+        </Card>
+        
+        <Card className="text-center">
+          <div className="text-3xl mb-2">📊</div>
+          <div className="text-2xl font-bold text-blue-400">0</div>
+          <div className="text-dark-400">Punti Totali</div>
+        </Card>
+      </div>
 
-      {/* Griglia Leghe */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-        gap: '24px'
-      }}>
+      {/* Leghe */}
+      <div>
+        <h2 className="text-2xl font-bold text-dark-100 mb-6">Le Tue Leghe</h2>
+        
         {leghe.length === 0 ? (
-          <div style={{
-            gridColumn: '1 / -1',
-            textAlign: 'center',
-            padding: '64px',
-            background: '#1E293B',
-            borderRadius: '12px',
-            border: '2px dashed #6B7280'
-          }}>
-            <div style={{fontSize: '48px', marginBottom: '16px'}}>🏆</div>
-            <h3 style={{color: '#F59E0B', marginBottom: '8px'}}>Nessuna Lega Trovata</h3>
-            <p style={{color: '#94A3B8'}}>
+          <Card className="text-center py-16">
+            <div className="text-6xl mb-4">🏆</div>
+            <h3 className="text-xl font-bold text-dark-100 mb-2">Nessuna Lega Trovata</h3>
+            <p className="text-dark-400 mb-6">
               Crea la tua prima lega per iniziare a giocare!
             </p>
-          </div>
-        ) : (
-          leghe.map(lega => (
-            <div
-              key={lega.id}
-              style={{
-                background: 'linear-gradient(135deg, #1E293B 0%, #374151 100%)',
-                padding: '24px',
-                borderRadius: '12px',
-                border: '2px solid #16A34A',
-                cursor: 'pointer'
-              }}
-              onClick={() => navigate(`/live-match?lega=${lega.id}`)}
+            <Button
+              onClick={() => setShowCreateLega(true)}
+              icon="➕"
+              variant="primary"
             >
-              <h3 style={{color: '#16A34A', marginBottom: '12px'}}>
-                🏆 {lega.nome}
-              </h3>
-              <div style={{fontSize: '14px', color: '#94A3B8', marginBottom: '16px'}}>
-                ID: {lega.id} • Creata: {new Date(lega.created_at).toLocaleDateString()}
-              </div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <div style={{fontSize: '12px', color: '#F59E0B'}}>
-                  👥 Squadre: {lega.num_squadre || 0}
-                </div>
-                <div style={{
-                  background: '#16A34A',
-                  color: '#fff',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  ATTIVA
-                </div>
-              </div>
-            </div>
-          ))
+              Crea Prima Lega
+            </Button>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {leghe.map(lega => (
+              <Card
+                key={lega.id}
+                hover
+                onClick={() => navigate(`/live-match?lega=${lega.id}`)}
+                className="cursor-pointer"
+              >
+                <Card.Header>
+                  <Card.Title className="text-primary-400">
+                    🏆 {lega.nome}
+                  </Card.Title>
+                  <Card.Description>
+                    Creata il {new Date(lega.created_at).toLocaleDateString()}
+                  </Card.Description>
+                </Card.Header>
+                
+                <Card.Content>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-dark-400">
+                      👥 Squadre: {lega.num_squadre || 0}
+                    </span>
+                    <span className="px-2 py-1 bg-primary-600 text-white text-xs rounded-full">
+                      ATTIVA
+                    </span>
+                  </div>
+                </Card.Content>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Quick Actions */}
-      <div style={{
-        marginTop: '48px',
-        background: '#1E293B',
-        padding: '24px',
-        borderRadius: '12px',
-        border: '1px solid #374151'
-      }}>
-        <h3 style={{color: '#16A34A', marginBottom: '16px'}}>⚡ Azioni Rapide</h3>
+      {/* Azioni rapide */}
+      <Card>
+        <Card.Header>
+          <Card.Title>⚡ Azioni Rapide</Card.Title>
+          <Card.Description>
+            Accesso veloce alle funzionalità principali
+          </Card.Description>
+        </Card.Header>
         
-        <div style={{display: 'flex', gap: '16px', flexWrap: 'wrap'}}>
-          <button
-            onClick={() => navigate('/live-match')}
-            style={{
-              background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
-              color: '#fff',
-              border: 'none',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            ⚽ Live Match Demo
-          </button>
+        <Card.Content>
+          <div className="flex flex-wrap gap-4">
+            <Button
+              onClick={() => navigate('/rosters')}
+              icon="👥"
+              variant="primary"
+            >
+              Gestisci Roster
+            </Button>
+            
+            <Button
+              onClick={() => navigate('/formations')}
+              icon="⚽"
+              variant="secondary"
+            >
+              Schiera Formazione
+            </Button>
+            
+            <Button
+              onClick={() => navigate('/live-match')}
+              icon="📺"
+              variant="info"
+            >
+              Live Match Demo
+            </Button>
+            
+            <Button
+              onClick={() => navigate('/transfers')}
+              icon="🔄"
+              variant="outline"
+            >
+              Trasferimenti
+            </Button>
+          </div>
+        </Card.Content>
+      </Card>
+
+      {/* Modal Crea Lega */}
+      <Modal
+        isOpen={showCreateLega}
+        onClose={() => setShowCreateLega(false)}
+        title="➕ Crea Nuova Lega"
+        size="md"
+      >
+        <div className="space-y-6">
+          <Input
+            label="Nome della Lega"
+            value={newLegaName}
+            onChange={(e) => setNewLegaName(e.target.value)}
+            placeholder="Inserisci il nome della lega..."
+            icon="🏆"
+          />
           
-          <button
-            onClick={() => navigate('/legacy')}
-            style={{
-              background: '#6B7280',
-              color: '#fff',
-              border: 'none',
-              padding: '12px 20px',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            🔄 Versione Legacy
-          </button>
+          <div className="flex justify-end gap-3">
+            <Button
+              onClick={() => setShowCreateLega(false)}
+              variant="secondary"
+            >
+              Annulla
+            </Button>
+            <Button
+              onClick={createLega}
+              variant="success"
+              icon="✅"
+            >
+              Crea Lega
+            </Button>
+          </div>
         </div>
-      </div>
+      </Modal>
     </div>
   );
 }

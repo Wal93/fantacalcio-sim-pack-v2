@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Input from '../components/ui/Input';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
@@ -133,106 +137,68 @@ function Login() {
   };
 
   return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)'
-    }}>
-      <div style={{
-        background: '#1E293B',
-        padding: '48px',
-        borderRadius: '16px',
-        border: '2px solid #16A34A',
-        minWidth: '400px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-      }}>
-        <h1 style={{
-          color: '#16A34A',
-          textAlign: 'center',
-          marginBottom: '32px',
-          fontSize: '28px'
-        }}>
-          ⚽ Fantacalcio Enterprise
-        </h1>
-        
-        <form onSubmit={handleSubmit}>
-          <div style={{marginBottom: '24px'}}>
-            <label style={{display: 'block', marginBottom: '8px', color: '#F3F4F6'}}>
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                background: '#374151',
-                border: '1px solid #6B7280',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '16px'
-              }}
-              placeholder="mario.rossi@email.com"
-            />
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 p-4">
+      <div className="w-full max-w-md">
+        <Card className="animate-fadeIn" padding="xl">
+          <Card.Header className="text-center">
+            <div className="text-6xl mb-4">⚽</div>
+            <Card.Title className="text-3xl text-gradient">
+              Fantacalcio Enterprise
+            </Card.Title>
+            <Card.Description className="mt-2">
+              {isRegistering ? 'Crea il tuo account' : 'Accedi al tuo account'}
+            </Card.Description>
+          </Card.Header>
           
-          <div style={{marginBottom: '32px'}}>
-            <label style={{display: 'block', marginBottom: '8px', color: '#F3F4F6'}}>
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                background: '#374151',
-                border: '1px solid #6B7280',
-                borderRadius: '8px',
-                color: '#fff',
-                fontSize: '16px'
-              }}
-              placeholder="••••••••"
-            />
-          </div>
-          
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '16px',
-              background: loading ? '#6B7280' : 'linear-gradient(135deg, #16A34A 0%, #22C55E 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginBottom: '16px'
-            }}
-          >
-            {loading ? '⏳' : (isRegistering ? '✅ Registrati' : '🚀 Accedi')}
-          </button>
-        </form>
+          <Card.Content>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Input
+                label="Email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="mario.rossi@email.com"
+                icon="📧"
+                required
+              />
+              
+              <Input
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                icon="🔒"
+                required
+              />
+              
+              <Button
+                type="submit"
+                disabled={loading}
+                loading={loading}
+                variant="primary"
+                size="lg"
+                className="w-full"
+                icon={isRegistering ? "✅" : "🚀"}
+              >
+                {isRegistering ? 'Registrati' : 'Accedi'}
+              </Button>
+            </form>
+            
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => setIsRegistering(!isRegistering)}
+                className="text-primary-400 hover:text-primary-300 text-sm underline transition-colors duration-200"
+              >
+                {isRegistering ? 'Hai già un account? Accedi' : 'Non hai un account? Registrati'}
+              </button>
+            </div>
+          </Card.Content>
+        </Card>
         
-        <div style={{textAlign: 'center'}}>
-          <button
-            onClick={() => setIsRegistering(!isRegistering)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#16A34A',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
-          >
-            {isRegistering ? 'Hai già un account? Accedi' : 'Non hai un account? Registrati'}
-          </button>
+        {/* Footer */}
+        <div className="text-center mt-8 text-dark-400 text-sm">
+          <p>© 2024 Fantacalcio Enterprise. Tutti i diritti riservati.</p>
         </div>
       </div>
     </div>
