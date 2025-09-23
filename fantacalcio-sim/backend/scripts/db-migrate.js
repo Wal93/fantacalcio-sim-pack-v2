@@ -1,0 +1,10 @@
+import fs from 'fs';
+import { Client } from 'pg';
+const sqlPath = '/app/../db/migrations/001_schema.sql';
+const sql = fs.readFileSync(sqlPath, 'utf-8');
+const url = process.env.DATABASE_URL || `postgres://${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`;
+const client = new Client({ connectionString: url });
+await client.connect();
+await client.query(sql);
+await client.end();
+console.log('Migrations applied');
