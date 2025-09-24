@@ -1,0 +1,165 @@
+version: '3'
+
+vars:
+  COMPOSE_FILE: ./fantacalcio-sim/infra/docker-compose.prod.yml
+  PROJECT_DIR: ./fantacalcio-sim
+
+tasks:
+  up:
+    desc: "Avvia tutto l'ambiente"
+    cmds:
+      - task: check-env
+      - echo "Avviando l'ambiente completo..."
+      - docker-compose -f {{.COMPOSE_FILE}} up -d
+      - echo "Ambiente avviato!"
+      - task: show-urls
+
+  up-dev:
+    desc: "Avvia solo database, backend e sim-engine"
+    cmds:
+      - task: check-env
+      - echo "Avviando ambiente di sviluppo..."
+      - docker-compose -f {{.COMPOSE_FILE}} up -d postgres redis backend sim-engine
+      - task: show-urls
+
+  down:
+    desc: "Ferma tutti i servizi"
+    cmds:
+      - echo "Fermando tutti i servizi..."
+      - docker-compose -f {{.COMPOSE_FILE}} down
+
+  down-clean:
+    desc: "Ferma tutti i servizi e rimuove volumi"
+    cmds:
+      - echo "ATTENZIONE - Questo comando cancella tutti i dati del database"
+      - docker-compose -f {{.COMPOSE_FILE}} down -v
+      - docker system prune -f
+
+  restart:
+    desc: "Restart completo dell'ambiente"
+    cmds:
+      - echo "Restart completo..."
+      - task: down
+      - powershell -Command "Start-Sleep -Seconds 5"
+      - task: up
+
+  restart-clean:
+    desc: "Restart pulito - risolve problemi di rete"
+    cmds:
+      - echo "Restart pulito..."
+      - task: down
+      - docker system prune -f
+      - powershell -Command "Start-Sleep -Seconds 3"
+      - task: up
+
+  status:
+    desc: "Mostra lo stato di tutti i servizi"
+    cmds:
+      - echo "Stato dei servizi:"
+      - docker-compose -f {{.COMPOSE_FILE}} ps
+
+  logs:
+    desc: "Mostra i log di tutti i servizi"
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f
+
+  logs-service:
+    desc: "Log di un servizio specifico - usage: task logs-service SERVICE=backend"
+    cmds:
+      - docker-compose -f {{.COMPOSE_FILE}} logs -f {{.SERVICE}}
+
+  rebuild:
+    desc: "Rebuilda un servizio - usage: task rebuild SERVICE=backend"
+    cmds:
+      - echo "Rebuilding {{.SERVICE}}..."
+      - docker-compose -f {{.COMPOSE_FILE}} build {{.SERVICE}}
+      - docker-compose -f {{.COMPOSE_FILE}} up -d {{.SERVICE}}
+
+  db-setup:
+    desc: "Setup iniziale del database"
+    cmds:
+      - task: check-env
+      - echo "Setup database..."
+      - task: db-migrate
+      - task: db-seed
+
+  db-migrate:
+    desc: "Esegue le migrazioni del database"
+    cmds:
+      - echo "Eseguendo migrazioni..."
+      - docker-compose -f {{.COMPOSE_FILE}} exec backend npm run migrate
+
+  db-seed:
+    desc: "Esegue il seed del database"
+    cmds:
+      - echo "Eseguendo seed..."
+      - docker-compose -f {{.COMPOSE_FILE}} exec backend npm run seed
+
+  health:
+    desc: "Controlla la salute di tutti i servizi"
+    cmds:
+      - echo "Health check:"
+      - docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+  cleanup:
+    desc: "Cleanup completo di Docker"
+    cmds:
+      - echo "Cleanup completo..."
+      - task: down
+      - docker system prune -a -f --volumes
+      - docker network prune -f
+      - echo "Cleanup completato"
+
+  check-env:
+    desc: "Controlla se il file .env esiste"
+    cmds:
+      - powershell -Command "if (!(Test-Path '{{.PROJECT_DIR}}/.env')) { Copy-Item '{{.PROJECT_DIR}}/.env.example' '{{.PROJECT_DIR}}/.env'; Write-Host 'File .env creato' }"
+    silent: true
+
+  show-urls:
+    desc: "Mostra gli URL dell'applicazione"
+    cmds:
+      - echo ""
+      - echo "Applicazione disponibile su:"
+      - echo "  Frontend   - http://localhost:3000"
+      - echo "  Backend    - http://localhost:4000"  
+      - echo "  Sim-Engine - http://localhost:8000"
+      - echo "  PostgreSQL - localhost:5432"
+      - echo "  Redis      - localhost:6379"
+      - echo ""
+
+  help:
+    desc: "Mostra tutti i comandi disponibili"
+    cmds:
+      - echo "FANTACALCIO SIM - Comandi disponibili:"
+      - echo ""
+      - echo "AMBIENTE:"
+      - echo "  up          - Avvia tutto"
+      - echo "  up-dev      - Avvia solo backend/db"
+      - echo "  down        - Ferma tutto"
+      - echo "  restart     - Restart normale"
+      - echo "  restart-clean - Restart pulito (per problemi)"
+      - echo ""
+      - echo "MONITORAGGIO:"
+      - echo "  status      - Stato servizi"
+      - echo "  logs        - Log tutti i servizi"  
+      - echo "  health      - Health check"
+      - echo ""
+      - echo "DATABASE:"
+      - echo "  db-setup    - Setup iniziale"
+      - echo "  db-migrate  - Migrazioni"
+      - echo "  db-seed     - Seed dati"
+      - echo ""
+      - echo "MANUTENZIONE:"
+      - echo "  cleanup     - Pulizia Docker"
+      - echo "  down-clean  - Rimuove tutto"
+      - echo ""
+      - echo "ESEMPI:"
+      - echo "  task up                    - Avvia tutto"
+      - echo "  task restart-clean         - Risolve problemi"
+      - echo "  task logs-service SERVICE=backend"
+      - echo "  task rebuild SERVICE=frontend"
+
+  default:
+    cmds:
+      - task: help
