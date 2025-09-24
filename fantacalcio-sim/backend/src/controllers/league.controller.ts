@@ -40,18 +40,19 @@ export class LeagueController {
   @Get(':id/classifica')
   async classifica(@Param('id') id:string) {
     const r = await this.db.client.query(`
-      SELECT sf.nome, SUM(CASE WHEN pl.risultato='H' AND pl.squadra_casa_id=sf.id THEN 3
+      SELECT sf.nome, 
+             COALESCE(SUM(CASE WHEN pl.risultato='H' AND pl.squadra_casa_id=sf.id THEN 3
                                WHEN pl.risultato='A' AND pl.squadra_trasferta_id=sf.id THEN 3
-                               WHEN pl.risultato='D' THEN 1 ELSE 0 END) as punti,
-             SUM(CASE WHEN pl.squadra_casa_id=sf.id THEN pl.gol_casa
-                      WHEN pl.squadra_trasferta_id=sf.id THEN pl.gol_trasferta ELSE 0 END) as gf,
-             SUM(CASE WHEN pl.squadra_casa_id=sf.id THEN pl.gol_trasferta
-                      WHEN pl.squadra_trasferta_id=sf.id THEN pl.gol_casa ELSE 0 END) as gs
+                               WHEN pl.risultato='D' THEN 1 ELSE 0 END), 0) as punti,
+             COALESCE(SUM(CASE WHEN pl.squadra_casa_id=sf.id THEN pl.gol_casa
+                      WHEN pl.squadra_trasferta_id=sf.id THEN pl.gol_trasferta ELSE 0 END), 0) as gf,
+             COALESCE(SUM(CASE WHEN pl.squadra_casa_id=sf.id THEN pl.gol_trasferta
+                      WHEN pl.squadra_trasferta_id=sf.id THEN pl.gol_casa ELSE 0 END), 0) as gs
       FROM squadre_fantasy sf
       LEFT JOIN partite_leghe pl ON pl.lega_id=$1 AND (pl.squadra_casa_id=sf.id OR pl.squadra_trasferta_id=sf.id)
       WHERE sf.lega_id=$1
-      GROUP BY sf.nome
-      ORDER BY punti DESC, (gf-gs) DESC, gf DESC
+      GROUP BY sf.id, sf.nome
+      ORDER BY 2 DESC, (3-4) DESC, 3 DESC
     `, [id]);
     return { status:'ok', data: r.rows };
   }
