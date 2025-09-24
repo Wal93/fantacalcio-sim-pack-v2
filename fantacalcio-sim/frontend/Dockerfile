@@ -1,7 +1,7 @@
 FROM node:20-alpine as build
 WORKDIR /app
 COPY package.json ./
-RUN npm install --no-audit --no-fund
+RUN npm install --no-audit --no-fund --include=dev
 COPY . .
 RUN npm run build
 FROM nginx:alpine

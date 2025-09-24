@@ -81,7 +81,12 @@ function Leagues() {
       const data = await response.json();
 
       if (data.status === 'ok') {
-        toast.success('✅ Lega creata con successo!');
+        const leagueId = data.data.league_id;
+        toast.success('✅ Lega creata! Ora crea la tua squadra...');
+        
+        // Automaticamente crea la prima squadra
+        await createFirstTeam(leagueId, newLeagueName);
+        
         setNewLeagueName('');
         setShowCreateLeague(false);
         loadLeagues();
@@ -91,6 +96,34 @@ function Leagues() {
     } catch (error) {
       console.error('Errore creazione lega:', error);
       toast.error('❌ Errore creazione lega');
+    }
+  };
+
+  const createFirstTeam = async (leagueId, leagueName) => {
+    try {
+      const response = await fetch(`${API_BASE}/leagues/${leagueId}/teams`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders()
+        },
+        body: JSON.stringify({ 
+          name: `Squadra ${leagueName.substring(0, 10)}`, 
+          logo_url: '' 
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'ok') {
+        toast.success('⚽ Squadra creata con successo!');
+        return data.data.team_id;
+      } else {
+        toast.error(`❌ Errore creazione squadra: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Errore creazione squadra:', error);
+      toast.error('❌ Errore creazione squadra');
     }
   };
 

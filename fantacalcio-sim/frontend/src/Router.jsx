@@ -9,6 +9,7 @@ import Rosters from './pages/Rosters.jsx';
 import Formations from './pages/Formations.jsx';
 import Leagues from './pages/Leagues.jsx';
 import Profile from './pages/Profile.jsx';
+import Admin from './pages/Admin.jsx';
 import Layout from './components/layout/Layout.jsx';
 
 function AppRouter() {
@@ -74,6 +75,14 @@ function AppRouter() {
           element={
             <Layout>
               <Profile />
+            </Layout>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <Layout>
+              <Admin />
             </Layout>
           } 
         />

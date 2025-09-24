@@ -8,15 +8,16 @@ const Card = ({
   variant = 'default',
   ...props 
 }) => {
-  const baseClasses = 'rounded-xl border transition-all duration-200';
+  const baseClasses = 'rounded-xl border transition-all duration-300 shadow-lg backdrop-blur-sm';
   
   const variants = {
-    default: 'bg-dark-800 border-dark-700',
-    glass: 'glass-effect',
-    primary: 'bg-gradient-to-br from-dark-800 to-dark-900 border-primary-600',
-    success: 'bg-gradient-to-br from-dark-800 to-dark-900 border-green-600',
-    warning: 'bg-gradient-to-br from-dark-800 to-dark-900 border-yellow-600',
-    danger: 'bg-gradient-to-br from-dark-800 to-dark-900 border-red-600'
+    default: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-dark-700 shadow-dark-900/50',
+    glass: 'glass-effect border-dark-600/50 shadow-xl',
+    primary: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-primary-600/50 shadow-primary-900/20',
+    success: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-green-600/50 shadow-green-900/20',
+    warning: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-yellow-600/50 shadow-yellow-900/20',
+    danger: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-red-600/50 shadow-red-900/20',
+    info: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-blue-600/50 shadow-blue-900/20'
   };
   
   const paddings = {
@@ -27,7 +28,7 @@ const Card = ({
     xl: 'p-10'
   };
   
-  const hoverClasses = hover ? 'hover:shadow-xl hover:scale-[1.02] cursor-pointer' : '';
+  const hoverClasses = hover ? 'hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer card-hover' : '';
   
   const classes = `${baseClasses} ${variants[variant]} ${paddings[padding]} ${hoverClasses} ${className}`;
   

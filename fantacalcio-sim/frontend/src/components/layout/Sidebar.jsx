@@ -56,6 +56,13 @@ const Sidebar = ({ isOpen, onClose }) => {
       icon: '📊',
       path: '/statistics',
       description: 'Analizza le performance'
+    },
+    {
+      id: 'admin',
+      label: 'Admin Panel',
+      icon: '⚙️',
+      path: '/admin',
+      description: 'Gestione sistema'
     }
   ];
   

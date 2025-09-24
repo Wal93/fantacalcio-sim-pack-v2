@@ -235,12 +235,31 @@ def simula(payload: SimPayload):
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """, (partita_id, minuto, srt, tipo, lato, pid, Json({"giocatore": delta}), random.randint(20, 80), random.randint(10, 90)))
 
-        # salva statline
+        # salva statline con voti
         for pid, st in statline.items():
+            # Genera voto base realistico (4-10)
+            voto_base = round(np.random.normal(6.0, 1.0), 1)  # Media 6.0, deviazione 1.0
+            voto_base = max(4.0, min(10.0, voto_base))  # Clamp tra 4.0 e 10.0
+            
+            # Modifica voto in base agli eventi
+            if st["reti"] > 0:
+                voto_base += st["reti"] * 0.5  # +0.5 per ogni gol
+            if st["assist"] > 0:
+                voto_base += st["assist"] * 0.3  # +0.3 per ogni assist
+            if st["ammonizioni"] > 0:
+                voto_base -= st["ammonizioni"] * 0.2  # -0.2 per ogni ammonizione
+            if st["espulsioni"] > 0:
+                voto_base -= 1.0  # -1.0 per espulsione
+            if st["autogol"] > 0:
+                voto_base -= 0.5  # -0.5 per autogol
+                
+            # Clamp finale del voto
+            voto_finale = max(4.0, min(10.0, round(voto_base, 1)))
+            
             cur.execute("""
-                INSERT INTO statistiche_gioc(partita_id, giocatore_id, minuti, reti, assist, ammonizioni, espulsioni, autogol, fantapunti)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """, (partita_id, pid, st["minuti"], st["reti"], st["assist"], st["ammonizioni"], st["espulsioni"], st["autogol"], st["punti"]))
+                INSERT INTO statistiche_gioc(partita_id, giocatore_id, minuti, reti, assist, ammonizioni, espulsioni, autogol, fantapunti, voto)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            """, (partita_id, pid, st["minuti"], st["reti"], st["assist"], st["ammonizioni"], st["espulsioni"], st["autogol"], st["punti"], voto_finale))
 
         # aggiorna risultato finale
         cur.execute("UPDATE partite_simulate SET gol_casa=%s, gol_trasferta=%s WHERE id=%s", (gC, gT, partita_id))
