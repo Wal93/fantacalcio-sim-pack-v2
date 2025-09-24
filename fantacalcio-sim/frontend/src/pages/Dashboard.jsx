@@ -7,6 +7,8 @@ import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import Input from '../components/ui/Input';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import StatCard from '../components/ui/StatCard';
+import ActionButton from '../components/ui/ActionButton';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
@@ -189,29 +191,41 @@ function Dashboard() {
 
       {/* Statistiche rapide */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="text-center">
-          <div className="text-3xl mb-2">🏆</div>
-          <div className="text-2xl font-bold text-primary-400">{leghe.length}</div>
-          <div className="text-dark-400">Leghe Attive</div>
-        </Card>
+        <StatCard
+          title="Leghe Attive"
+          value={leghe.length}
+          icon="🏆"
+          color="warning"
+          animated
+          delay={0}
+        />
         
-        <Card className="text-center">
-          <div className="text-3xl mb-2">👥</div>
-          <div className="text-2xl font-bold text-green-400">0</div>
-          <div className="text-dark-400">Squadre Totali</div>
-        </Card>
+        <StatCard
+          title="Squadre Totali"
+          value="0"
+          icon="👥"
+          color="primary"
+          animated
+          delay={0.1}
+        />
         
-        <Card className="text-center">
-          <div className="text-3xl mb-2">⚽</div>
-          <div className="text-2xl font-bold text-yellow-400">0</div>
-          <div className="text-dark-400">Partite Giocate</div>
-        </Card>
+        <StatCard
+          title="Partite Giocate"
+          value="0"
+          icon="⚽"
+          color="success"
+          animated
+          delay={0.2}
+        />
         
-        <Card className="text-center">
-          <div className="text-3xl mb-2">📊</div>
-          <div className="text-2xl font-bold text-blue-400">0</div>
-          <div className="text-dark-400">Punti Totali</div>
-        </Card>
+        <StatCard
+          title="Punti Totali"
+          value="0"
+          icon="📊"
+          color="info"
+          animated
+          delay={0.3}
+        />
       </div>
 
       {/* Leghe */}
@@ -219,31 +233,36 @@ function Dashboard() {
         <h2 className="text-2xl font-bold text-dark-100 mb-6">Le Tue Leghe</h2>
         
         {leghe.length === 0 ? (
-          <Card className="text-center py-16">
-            <div className="text-6xl mb-4">🏆</div>
-            <h3 className="text-xl font-bold text-dark-100 mb-2">Nessuna Lega Trovata</h3>
-            <p className="text-dark-400 mb-6">
+          <Card className="text-center py-16 animate-scaleIn" variant="premium" animated>
+            <div className="text-8xl mb-6 trophy-glow">🏆</div>
+            <h3 className="text-2xl font-bold text-gradient mb-4">Nessuna Lega Trovata</h3>
+            <p className="text-dark-400 mb-8 text-lg">
               Crea la tua prima lega per iniziare a giocare!
             </p>
             <Button
               onClick={() => setShowCreateLega(true)}
               icon="➕"
-              variant="primary"
+              variant="trophy"
+              size="lg"
+              premium
             >
               Crea Prima Lega
             </Button>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {leghe.map(lega => (
+            {leghe.map((lega, index) => (
               <Card
                 key={lega.id}
                 hover
                 onClick={() => navigate(`/live-match?lega=${lega.id}`)}
-                className="cursor-pointer"
+                className="cursor-pointer animate-slideInUp"
+                animated
+                style={{animationDelay: `${index * 0.1}s`}}
+                variant="premium"
               >
                 <Card.Header>
-                  <Card.Title className="text-primary-400">
+                  <Card.Title className="text-gradient-gold text-xl">
                     🏆 {lega.nome}
                   </Card.Title>
                   <Card.Description>
@@ -253,10 +272,10 @@ function Dashboard() {
                 
                 <Card.Content>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-dark-400">
+                    <span className="text-sm text-dark-400 font-medium">
                       👥 Squadre: {lega.num_squadre || 0}
                     </span>
-                    <span className="px-2 py-1 bg-primary-600 text-white text-xs rounded-full">
+                    <span className="px-3 py-1 bg-gradient-to-r from-primary-600 to-primary-500 text-white text-xs rounded-full font-bold shadow-lg">
                       ATTIVA
                     </span>
                   </div>
@@ -268,47 +287,47 @@ function Dashboard() {
       </div>
 
       {/* Azioni rapide */}
-      <Card>
+      <Card variant="premium" animated className="animate-slideInUp">
         <Card.Header>
-          <Card.Title>⚡ Azioni Rapide</Card.Title>
-          <Card.Description>
+          <Card.Title className="text-gradient text-2xl">⚡ Azioni Rapide</Card.Title>
+          <Card.Description className="text-lg">
             Accesso veloce alle funzionalità principali
           </Card.Description>
         </Card.Header>
         
         <Card.Content>
-          <div className="flex flex-wrap gap-4">
-            <Button
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ActionButton
               onClick={() => navigate('/rosters')}
               icon="👥"
+              title="Gestisci Roster"
+              subtitle="Squadra"
               variant="primary"
-            >
-              Gestisci Roster
-            </Button>
+            />
             
-            <Button
+            <ActionButton
               onClick={() => navigate('/formations')}
               icon="⚽"
+              title="Schiera Formazione"
+              subtitle="Tattica"
               variant="secondary"
-            >
-              Schiera Formazione
-            </Button>
+            />
             
-            <Button
+            <ActionButton
               onClick={() => navigate('/live-match')}
               icon="📺"
+              title="Live Match"
+              subtitle="Demo"
               variant="info"
-            >
-              Live Match Demo
-            </Button>
+            />
             
-            <Button
+            <ActionButton
               onClick={() => navigate('/transfers')}
               icon="🔄"
+              title="Trasferimenti"
+              subtitle="Mercato"
               variant="outline"
-            >
-              Trasferimenti
-            </Button>
+            />
           </div>
         </Card.Content>
       </Card>

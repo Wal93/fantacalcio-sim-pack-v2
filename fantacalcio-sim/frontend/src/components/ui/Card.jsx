@@ -6,9 +6,11 @@ const Card = ({
   hover = false, 
   padding = 'md',
   variant = 'default',
+  premium = false,
+  animated = false,
   ...props 
 }) => {
-  const baseClasses = 'rounded-xl border transition-all duration-300 shadow-lg backdrop-blur-sm';
+  const baseClasses = `rounded-xl border transition-all duration-300 shadow-lg backdrop-blur-sm ${animated ? 'animate-fadeIn' : ''}`;
   
   const variants = {
     default: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-dark-700 shadow-dark-900/50',
@@ -17,7 +19,10 @@ const Card = ({
     success: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-green-600/50 shadow-green-900/20',
     warning: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-yellow-600/50 shadow-yellow-900/20',
     danger: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-red-600/50 shadow-red-900/20',
-    info: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-blue-600/50 shadow-blue-900/20'
+    info: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-blue-600/50 shadow-blue-900/20',
+    premium: 'card-premium',
+    trophy: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-yellow-600/50 shadow-yellow-900/20 trophy-glow',
+    stadium: 'bg-gradient-to-br from-dark-800/90 to-dark-900/90 border-primary-600/50 shadow-primary-900/20 stadium-glow field-pattern'
   };
   
   const paddings = {
@@ -28,9 +33,10 @@ const Card = ({
     xl: 'p-10'
   };
   
-  const hoverClasses = hover ? 'hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer card-hover' : '';
+  const hoverClasses = hover ? 'hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer hover-lift-smooth' : '';
+  const premiumClasses = premium ? 'card-premium' : '';
   
-  const classes = `${baseClasses} ${variants[variant]} ${paddings[padding]} ${hoverClasses} ${className}`;
+  const classes = `${baseClasses} ${variants[variant]} ${paddings[padding]} ${hoverClasses} ${premiumClasses} ${className}`;
   
   return (
     <div className={classes} {...props}>

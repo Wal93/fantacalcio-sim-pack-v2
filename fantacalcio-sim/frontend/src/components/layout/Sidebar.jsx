@@ -80,21 +80,21 @@ const Sidebar = ({ isOpen, onClose }) => {
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-dark-800 border-r border-dark-700 z-50
-        transform transition-transform duration-300 ease-in-out
+        fixed top-0 left-0 h-full bg-gradient-to-b from-dark-800 to-dark-900 border-r border-dark-600 z-50
+        transform transition-transform duration-300 ease-in-out backdrop-blur-sm
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:z-auto
-        w-80 flex flex-col sidebar-mobile
+        w-80 flex flex-col sidebar-mobile shadow-xl
       `}>
         {/* Header */}
-        <div className="p-6 border-b border-dark-700">
+        <div className="p-6 border-b border-dark-600">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gradient">
+            <h1 className="text-2xl font-bold text-gradient hover-glow">
               ⚽ Fantacalcio
             </h1>
             <button
               onClick={onClose}
-              className="lg:hidden p-2 text-dark-400 hover:text-dark-200 hover:bg-dark-700 rounded-lg"
+              className="lg:hidden p-2 text-dark-400 hover:text-dark-200 hover:bg-dark-700 rounded-xl transition-all duration-200 hover:scale-105"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -103,7 +103,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
           
           {user && (
-            <div className="mt-4 p-3 bg-dark-700 rounded-lg">
+            <div className="mt-4 p-3 bg-gradient-to-r from-dark-700 to-dark-600 rounded-xl border border-dark-600">
               <p className="text-sm text-dark-300">Benvenuto</p>
               <p className="font-medium text-dark-100">{user.email}</p>
             </div>
@@ -120,10 +120,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                 onClose();
               }}
               className={`
-                w-full flex items-center p-3 rounded-lg transition-all duration-200
+                w-full flex items-center p-3 rounded-xl transition-all duration-200 nav-item-premium
                 ${isActive(item.path) 
-                  ? 'bg-primary-600 text-white shadow-lg' 
-                  : 'text-dark-300 hover:bg-dark-700 hover:text-dark-100'
+                  ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg hover-glow' 
+                  : 'text-dark-300 hover:bg-dark-700 hover:text-dark-100 hover:scale-105'
                 }
               `}
             >

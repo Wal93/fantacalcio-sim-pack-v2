@@ -6,6 +6,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import StatCard from '../components/ui/StatCard';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
@@ -187,21 +188,21 @@ function Formations() {
       </div>
 
       {/* Campo di gioco */}
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden" variant="stadium" animated>
         <Card.Header>
-          <Card.Title>Campo di Gioco</Card.Title>
-          <Card.Description>
+          <Card.Title className="text-gradient text-2xl">⚽ Campo di Gioco</Card.Title>
+          <Card.Description className="text-lg">
             Clicca su una posizione per schierare un giocatore
           </Card.Description>
         </Card.Header>
         
         <Card.Content>
-          <div className="relative bg-gradient-to-b from-green-600 to-green-500 rounded-lg p-8 min-h-96">
+          <div className="relative bg-gradient-to-b from-green-600 to-green-500 rounded-xl p-8 min-h-96 field-pattern stadium-glow">
             {/* Portiere */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
               <div
                 onClick={() => openPlayerSelect('goalkeeper', 0)}
-                className="w-20 h-20 bg-dark-800 border-2 border-dark-600 rounded-lg flex items-center justify-center cursor-pointer hover:border-primary-500 transition-colors duration-200"
+                className="w-20 h-20 bg-gradient-to-br from-dark-800 to-dark-900 border-2 border-dark-600 rounded-xl flex items-center justify-center cursor-pointer hover:border-primary-500 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 {formation.goalkeeper ? (
                   <div className="text-center">
@@ -315,29 +316,32 @@ function Formations() {
 
       {/* Statistiche formazione */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="text-center">
-          <div className="text-3xl mb-2">⚽</div>
-          <div className="text-2xl font-bold text-primary-400">
-            {formation.forwards.filter(p => p).length}
-          </div>
-          <div className="text-dark-400">Attaccanti</div>
-        </Card>
+        <StatCard
+          title="Attaccanti"
+          value={formation.forwards.filter(p => p).length}
+          icon="⚽"
+          color="warning"
+          animated
+          delay={0}
+        />
         
-        <Card className="text-center">
-          <div className="text-3xl mb-2">🛡️</div>
-          <div className="text-2xl font-bold text-blue-400">
-            {formation.defenders.filter(p => p).length}
-          </div>
-          <div className="text-dark-400">Difensori</div>
-        </Card>
+        <StatCard
+          title="Difensori"
+          value={formation.defenders.filter(p => p).length}
+          icon="🛡️"
+          color="info"
+          animated
+          delay={0.1}
+        />
         
-        <Card className="text-center">
-          <div className="text-3xl mb-2">🎯</div>
-          <div className="text-2xl font-bold text-green-400">
-            {formation.midfielders.filter(p => p).length}
-          </div>
-          <div className="text-dark-400">Centrocampisti</div>
-        </Card>
+        <StatCard
+          title="Centrocampisti"
+          value={formation.midfielders.filter(p => p).length}
+          icon="🎯"
+          color="primary"
+          animated
+          delay={0.2}
+        />
       </div>
 
       {/* Modal Selezione Giocatore */}

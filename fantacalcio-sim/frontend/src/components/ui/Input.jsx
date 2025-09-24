@@ -7,9 +7,10 @@ const Input = ({
   icon,
   iconPosition = 'left',
   className = '',
+  premium = false,
   ...props 
 }) => {
-  const baseClasses = 'w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200';
+  const baseClasses = `w-full px-4 py-3 border rounded-xl text-dark-100 placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 ${premium ? 'input-premium' : 'bg-dark-700 border-dark-600'}`;
   
   const errorClasses = error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : '';
   
