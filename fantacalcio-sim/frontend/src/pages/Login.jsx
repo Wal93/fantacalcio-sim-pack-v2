@@ -137,15 +137,15 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 p-4 field-pattern">
       <div className="w-full max-w-md">
-        <Card className="animate-fadeIn" padding="xl">
+        <Card className="animate-scaleIn" padding="xl" variant="premium" animated>
           <Card.Header className="text-center">
-            <div className="text-6xl mb-4">⚽</div>
-            <Card.Title className="text-3xl text-gradient">
+            <div className="text-8xl mb-6 trophy-glow">⚽</div>
+            <Card.Title className="text-4xl text-gradient mb-2">
               Fantacalcio Enterprise
             </Card.Title>
-            <Card.Description className="mt-2">
+            <Card.Description className="mt-4 text-lg">
               {isRegistering ? 'Crea il tuo account' : 'Accedi al tuo account'}
             </Card.Description>
           </Card.Header>
@@ -159,6 +159,7 @@ function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="mario.rossi@email.com"
                 icon="📧"
+                premium
                 required
               />
               
@@ -169,6 +170,7 @@ function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 icon="🔒"
+                premium
                 required
               />
               
@@ -180,6 +182,7 @@ function Login() {
                 size="lg"
                 className="w-full"
                 icon={isRegistering ? "✅" : "🚀"}
+                premium
               >
                 {isRegistering ? 'Registrati' : 'Accedi'}
               </Button>

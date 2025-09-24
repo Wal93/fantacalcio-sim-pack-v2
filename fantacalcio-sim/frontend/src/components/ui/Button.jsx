@@ -10,9 +10,10 @@ const Button = ({
   onClick,
   className = '',
   type = 'button',
+  premium = false,
   ...props 
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-900 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 glow-effect';
+  const baseClasses = `inline-flex items-center justify-center font-medium rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-900 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 ${premium ? 'btn-premium' : 'glow-effect'}`;
   
   const variants = {
     primary: 'bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white shadow-lg hover:shadow-xl hover:shadow-primary-500/25 focus:ring-primary-500',
@@ -22,7 +23,9 @@ const Button = ({
     danger: 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-lg hover:shadow-xl hover:shadow-red-500/25 focus:ring-red-500',
     info: 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 focus:ring-blue-500',
     ghost: 'bg-transparent hover:bg-dark-700 text-dark-300 hover:text-dark-100 focus:ring-dark-500 hover:scale-105',
-    outline: 'bg-transparent border-2 border-primary-600 text-primary-400 hover:bg-primary-600 hover:text-white focus:ring-primary-500 hover:shadow-lg hover:shadow-primary-500/25'
+    outline: 'bg-transparent border-2 border-primary-600 text-primary-400 hover:bg-primary-600 hover:text-white focus:ring-primary-500 hover:shadow-lg hover:shadow-primary-500/25',
+    gold: 'bg-gradient-to-r from-yellow-500 to-yellow-400 hover:from-yellow-600 hover:to-yellow-500 text-black shadow-lg hover:shadow-xl hover:shadow-yellow-500/25 focus:ring-yellow-500 font-bold',
+    trophy: 'bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-white shadow-lg hover:shadow-xl hover:shadow-yellow-500/25 focus:ring-yellow-500 trophy-glow'
   };
   
   const sizes = {
